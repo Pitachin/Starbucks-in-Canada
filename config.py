@@ -41,7 +41,5 @@ BIG_CITIES = [
     (52.1332, -106.6700),  # Saskatoon
 ]
 
-try:
-    from secrets import STADIA_KEY
-except ImportError:
-    STADIA_KEY = ""
+
+STADIA_KEY = "9f6672f0-ce1f-4ca2-99be-9ac2e4042ce4" 
