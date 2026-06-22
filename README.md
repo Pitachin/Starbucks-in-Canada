@@ -1,17 +1,17 @@
 # 🗺️ Starbucks Canada — Store Distribution Analytics
 
-![Status](https://img.shields.io/badge/Status-Experimental-blue)
-![Python](https://img.shields.io/badge/python-3.9%2B-green)
+![](https://img.shields.io/badge/Status-Experimental-blue
+)
+![](https://img.shields.io/badge/python-3.9%2B-green
+)
 ![Starbucks](https://img.shields.io/badge/Starbucks-Canada-006241?logo=starbucks&logoColor=white&labelColor=006241)
 
 ![Starbucks](./pics/starbucks.avif)
 
-> Based on Web Scraping, Python, mapping every Starbucks stores in Canada and their corresponding minimal distance.
+> Mapping every Starbucks store in Canada and computing nearest-neighbor distances, using Python and web scraping.
 
-> Latest dataset file is free to access! If it helps, please star me!✨
-
+> Latest dataset file is free to access! If it helps, please star me! ✨
 ## Features
-
  
 - **Hidden API Scraping**: Reverse-engineers the private API behind [Starbucks' store locator](https://www.starbucks.com/store-locator) by inspecting browser traffic.
 - **Nationwide Collection**:
@@ -27,107 +27,98 @@
 - **Multi-Dimensional Visualization**:
   - 🗺️ **Interactive Map**: a zoomable Folium map of all 1,393 stores, with the closest pair and loneliest store highlighted.
   - 📊 **Distance Histogram**: Seaborn distribution of nearest-neighbor distances.
-  - 🍁 **Provincial Breakdown**: store counts and density across provinces. 
-
+  - 🍁 **Provincial Breakdown**: store counts and density across provinces.
 ## Introduction
-
+ 
 This project maps all Starbucks stores across Canada and analyzes the average distance between each store and its nearest neighbor.
-
-Given that Starbucks is actively closing stores in Canada (see their [official announcement](https://stories.starbucks.ca/press/2025/message-from-brian-an-important-update/)), any pre-made dataset may fail to reflects the precise status of each store. Thus, I collected the real-time data myself through web scraping on Starbucks' store-locator website. Once collection is done, an HTML map will be generated automatically.
+ 
+Given that Starbucks is actively closing stores in Canada (see their [official announcement](https://stories.starbucks.ca/press/2025/message-from-brian-an-important-update/)), any pre-made dataset may fail to reflect the precise status of each store. Thus, I collected the real-time data myself through web scraping on Starbucks' store-locator website. Once collection is done, an HTML map will be generated automatically.
+ 
 ## Demonstration
-
+ 
 + Click [🌎](/output/Canada_map.html) to see the map!
-
-![](pics/Global.png)
-
-> National view — every store (red dots), the closest pair (orange), and the most isolated store (blue line).
-
 ![](pics/Localized.png)
-
-> Zoomed-in view — store clustering along Canada's southern corridor.
-
-+ Collected dataset is [here](/output/starbucks_Canada_final.csv)
-
-
+ 
+> A screenshot of the visualization.
+ 
++ The collected dataset is [here](/output/starbucks_Canada_final.csv).
 ## 📂 File Structure
+ 
 ```
-Starbucks in Canada/
-├── main.py                  # Orchestrator: runs scraper.py, then visualize.py
-├── scraper.py               # Hidden-API scraper (ThreadPoolExecutor + retry/backoff)
-├── city.py                  # Builds dense coordinate grids around major cities
-├── densify.py               # Adaptive densification around truncated (50-cap) points
-├── distance.py              # Nearest-neighbor distances (BallTree + Haversine)
-├── visualize.py             # Builds the Folium map + Seaborn histogram
-├── config.py                # API headers/URL, file paths, city coordinates
-├── secret.py                # Stadia Maps API key (git-ignored)
-├── record_time.py           # @timer decorator for benchmarking
-├── requirement.txt          # Python dependencies
+Starbucks-in-Canada/
+├── main.py            # Orchestrates the full scrape → visualize pipeline
+├── scraper.py         # Concurrent API scraping (ThreadPoolExecutor, retry/backoff)
+├── city.py            # Generates coordinate grids around city centers
+├── densify.py         # Adaptive grid densification to beat the 50-store cap
+├── distance.py        # Nearest-neighbor search: BallTree + Haversine (+ O(n²) baseline)
+├── visualize.py       # Builds the Folium map and Seaborn histogram
+├── record_time.py     # @timer decorator for benchmarking
+├── config.py          # API headers, URLs, file paths, city coordinates
 ├── data/
-│   ├── postal-codes-canada.csv   # Seed coordinates (postal-code centroids)
-│   └── canada.geojson            # Canada boundary overlay
+│   ├── postal-codes-canada.csv   # Coordinate input
+│   └── canada.geojson            # Boundary overlay for the map
 ├── output/
-│   ├── starbucks_Canada_final.csv  # Final dataset (1,393 stores)
-│   ├── Canada_map.html             # Interactive Folium map
-│   └── CAclosest_dist_hist.png     # Nearest-neighbor distance histogram
-├── pics/                    # README images
-└── info.md                  # Dev notes: API response samples & experiment logs
+│   ├── starbucks_Canada_final.csv   # Final dataset (1,393 stores)
+│   ├── Canada_map.html              # Interactive map
+│   └── CAclosest_dist_hist.png      # Distance histogram
+├── pics/              # Images used in this README
+├── requirement.txt    # Python dependencies
+└── README.md
 ```
-
-## 🛠️ 环境配置与安装
-
+ 
+## 🛠️ Setup & Installation
+ 
 Requires **Python 3.9+**.
-
-```bash
+ 
+```sh
 # 1. Clone the repository
-git clone <your-repo-url>
-cd "Starbucks in Canada"
-
+git clone https://github.com/Pitachin/Starbucks-in-Canada.git
+cd Starbucks-in-Canada
+ 
 # 2. Create and activate a virtual environment
 python3 -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+ 
 # 3. Install dependencies
 pip install -r requirement.txt
 ```
-
-The interactive map uses [Stadia Maps](https://stadiamaps.com/) tiles, which require a free API key.
-Create a `secret.py` (or set `STADIA_KEY` in `config.py`) with your own key:
-
+ 
+The interactive map uses tiles served via [Stadia Maps](https://stadiamaps.com/), which require a free API key. Create a local `secret.py` (already gitignored) and add yours:
+ 
 ```python
 # secret.py
-STADIA_KEY = "your-stadia-maps-api-key"
+STADIA_KEY = "your-key-here"
 ```
-
-## 🚀 使用指南
-
-Run the full pipeline (scrape → visualize) with a single command:
-
-```bash
-python main.py
+ 
+## 🚀 Usage
+ 
+Run the entire pipeline (scrape → analyze → visualize) with one command:
+ 
+```sh
+python3 main.py
 ```
-
-Or run each stage individually:
-
-```bash
-python scraper.py      # Collect stores  → output/starbucks_Canada_final.csv
-python densify.py      # Optional: fill gaps in dense provinces (ON / AB / BC)
-python distance.py     # Print nearest-neighbor stats (avg / closest / farthest)
-python visualize.py    # Build the map + histogram into output/
+ 
+Or run each stage independently:
+ 
+```sh
+python3 scraper.py      # Collect store data → output/starbucks_Canada_final.csv
+python3 distance.py     # Print nearest-neighbor stats and the speed benchmark
+python3 visualize.py    # Build the map and histogram
 ```
-
-**Outputs** (written to `output/`):
-- `starbucks_Canada_final.csv` — the full store dataset
-- `Canada_map.html` — interactive Folium map
-- `CAclosest_dist_hist.png` — nearest-neighbor distance histogram
-
-## ⚠️ 注意事项
-
-- **For educational / personal use only.** Respect Starbucks' Terms of Service and `robots.txt`. The scraper includes randomized delays and exponential backoff — please don't hammer the endpoint.
-- **Unofficial API.** The store-locator endpoint is private and undocumented; it can change or break at any time.
-- **50-store cap.** Each query returns at most 50 stores. Use `densify.py` to refine dense urban areas.
-- **Stadia Maps key required** for map tiles (free tier is sufficient). Keep your key in `secret.py` — never commit it.
-- **Point-in-time snapshot.** Data reflects the moment of scraping; Starbucks is actively closing Canadian stores, so counts will drift over time.
-
+ 
+After running, open `output/Canada_map.html` in your browser to explore the interactive map.
+ 
+## ⚠️ Notes
+ 
+- **Run from the terminal**, inside the activated virtual environment. VS Code's ▶️ "Run" button uses the system Python and will not find the installed packages.
+- **Be gentle with the scraper.** It includes deliberate delays between requests to avoid triggering Starbucks' anti-scraping defenses. Removing them risks getting your IP temporarily blocked (`403` errors).
+- **The store count is a snapshot.** Data was collected in 2026; the total will drift over time as Starbucks opens and closes locations. The dataset reflects the day it was scraped, not a permanent figure.
+- **The Stadia Maps API key is required** for map rendering. Without a valid key in `secret.py`, the tiles will not load.
 ## 📄 License
-
-For educational and personal use. If you intend to open-source this project, add a `LICENSE` file (e.g., [MIT](https://choosealicense.com/licenses/mit/)).
+ 
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+ 
+---
+ 
+*Built as a portfolio project in data engineering and geospatial analysis. If you found it useful, a ⭐ is always appreciated!*
+ 
