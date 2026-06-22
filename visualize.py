@@ -12,7 +12,7 @@ from distance import load_stores, compute_distances
 def make_map(df, closest_locs, closest_dists):
     locs = list(zip(df["latitude"], df["longitude"]))
 
-    # Load Ontario boundary
+    # Load Canada boundary
     with open(config.GEOJSON) as f:
         on_area = json.load(f)
 

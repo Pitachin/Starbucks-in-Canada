@@ -42,4 +42,10 @@ BIG_CITIES = [
 ]
 
 
-STADIA_KEY = "9f6672f0-ce1f-4ca2-99be-9ac2e4042ce4" 
+# Stadia Maps API key — never commit the real key.
+# Put it in secret.py (git-ignored) or set the STADIA_KEY environment variable.
+try:
+    from secret import STADIA_KEY
+except ImportError:
+    import os
+    STADIA_KEY = os.environ.get("STADIA_KEY", "")
