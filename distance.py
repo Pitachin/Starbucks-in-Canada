@@ -40,7 +40,7 @@ def compute_distances_2(df):
 
 
 def load_stores():
-    """Load Ontario stores from CSV."""
+    """Load all Canada stores from CSV."""
     df = pd.read_csv(config.STORES_CSV)
     df = df.reset_index(drop=True)
     return df
