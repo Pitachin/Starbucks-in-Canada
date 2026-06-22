@@ -36,7 +36,7 @@ Given that Starbucks is actively closing stores in Canada (see their [official a
  
 ## Demonstration
  
-+ Click [🌎](/output/Canada_map.html) to see the map!
++ Click [🌎](https://Pitachin.github.io/Starbucks-in-Canada/output/Canada_map.html) to see the map!
 ![](pics/Localized.png)
  
 > A screenshot of the visualization.
